@@ -6,9 +6,13 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
+import org.hibernate.annotations.BatchSize;
+
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Getter
 @Setter
@@ -18,7 +22,7 @@ import java.util.List;
 public class User {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private Long id;
 
     @Column(nullable = false)
@@ -28,7 +32,7 @@ public class User {
 
     @Column(nullable = false, unique = true)
     private String email;
-    @Column(nullable = false, insertable = false, updatable = false, name = "created_at")
+    @Column(nullable = false, updatable = false, name = "created_at")
     private LocalDateTime createdAt = LocalDateTime.now();
     @Column(nullable = false, name = "last_updated_at")
     private LocalDateTime lastUpdatedAt = LocalDateTime.now();
@@ -36,12 +40,11 @@ public class User {
     @OneToOne(mappedBy = "user")
     private Profile profile;
 
-    @JsonIgnore
+    @BatchSize(size = 50)
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     @Setter(AccessLevel.PRIVATE)
     private List<Reminder> reminders = new ArrayList<>();
 
-    @JsonIgnore
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     @Setter(AccessLevel.PRIVATE)
     private List<Note> notes = new ArrayList<>();

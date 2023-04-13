@@ -1,5 +1,6 @@
 package com.example.demobestdbpractices.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -8,22 +9,25 @@ import java.time.LocalDateTime;
 
 @Getter
 @Setter
-@ToString
+@ToString(exclude = "user")
 @Entity
-@Table(name = "persons")
+@Table(name = "profiles")
 public class Profile {
 
     @Id
     private Long id;
 
+    @Column(name = "picture_url")
     private String pictureUrl;
+    @Column(name = "active")
     private boolean active;
-    @Column(nullable = false, updatable = false)
+    @Column(nullable = false, updatable = false, name = "created_at")
     private LocalDateTime createdAt = LocalDateTime.now();
 
     @Column(nullable = false, name = "last_updated_at")
     private LocalDateTime lastUpdatedAt = LocalDateTime.now();
 
+    @JsonIgnore
     @OneToOne(fetch = FetchType.LAZY)
     @MapsId
     private User user;
